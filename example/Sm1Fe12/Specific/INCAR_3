@@ -1,0 +1,36 @@
+#= General Settings =# 
+  PREC = Normal
+  EDIFF = 1e-4
+  ISTART = 0
+  ISPIN = 2
+  MAGMOM = 1*7.0 12*5.0 
+  ENCUT = 300
+  KSPACING = 0.5
+  
+#= Parallelization =#
+  LPLANE = .TRUE.
+  NSIM = 4
+  NCORE = 4
+  LSCALU = .FALSE.
+  NPAR = 3
+
+#= Ionic Relaxation Settings =#
+  NSW = 100
+  IBRION = 1
+  ISIF = 2
+  POTIM = 0.2
+
+#= Electronic Relxation Settings =#
+  ALGO = FAST
+
+
+#= Write flags =#
+  LCHARG = .TRUE.
+  LWAVE = .FALSE.
+  LVTOT = .FALSE.
+  LORBIT = 11
+
+#= DOS =#
+  ISMEAR = 0
+  SIGMA = 0.01
+

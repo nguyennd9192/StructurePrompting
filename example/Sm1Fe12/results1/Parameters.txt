@@ -1,0 +1,70 @@
+
+******************************************
+*      TYPE OF RUN AND SYSTEM            *
+******************************************
+USPEX : calculationMethod
+300 : calculationType
+13  : minAt
+14  : maxAt
+0.5 : howManyTrans
+1 :  antiSeedsActivation
+0.01 :  antiSeedsMax
+0.005 :  antiSeedsSigma
+
+
+0.8 : bestFrac
+0.0001 : ExternalPressure
+
+% optType
+mag_moment enthalpy
+% EndOptType
+ 
+% numSpecies
+1 12
+% EndNumSpecies
+
+% atomType
+Sm Fe
+% EndAtomType
+
+% symmetries
+2-230
+% endSymmetries
+
+******************************************
+*               POPULATION               *
+******************************************
+128    : populationSize (how many individuals per generation)
+128    : initialPopSize 
+30    : numGenerations (how many generations shall be calculated)
+100    : stopCrit 
+0      : reoptOld
+
+******************************************
+*          VARIATION OPERATORS           *
+******************************************
+0.3  : fracGene (fraction of generation produced by heredity)
+0.0  : fracRand (fraction of generation produced randomly from space groups)
+0.3  : fracPerm
+0.0  : fracTrans (offer more substitution)
+0.3  : fracLatMut
+0.3  : fracAtomsMut
+
+
+*****************************************
+*   DETAILS OF AB INITIO CALCULATIONS   * 
+*****************************************
+1     : whichCluster (0: no-job-script, 1: local submission, 2: remote submission)
+32    : numParallelCalcs (how many parallel calculations shall be performed)
+
+
+/this_remote: remoteFolder
+
+% abinitioCode
+1 1 1 1
+% ENDabinit
+
+% commandExecutable
+/opt/trump/vasp/5.4.4-io21.4/bin/vasp_std > log
+% EndExecutable
+
