@@ -60,10 +60,21 @@ if __name__ == '__main__':
 			mmp = result_dir + "{0}/results1/magmomProperties".format(job)
 			if os.path.isfile(mmp):
 				# # to get magmom_pa
-				magmom = get_magmom_v(filename=mmp)
+				magmom_pv = get_magmom_v(filename=mmp)
 				n_atom_has_mag = len(magmom)
-				ene_df.loc[indexes[:n_atom_has_mag],"magmom"] = magmom * vol[:n_atom_has_mag]
-				ene_df.loc[indexes[:n_atom_has_mag],"magmom_pv"] = magmom
+				
+
+				magmom 	= magmom_pv * vol[:n_atom_has_mag]
+				for index in indexes[:n_atom_has_mag]:
+					for element in comps_array:
+						if element in LANTHANIDE_MAG.keys():
+							n_lanthanide = ene_df.loc[index, "Composition{}".format(element)]
+							# magmom += LANTHANIDE_MAG[a]
+							magmom[index] += n_lanthanide*J4f[a]*gJ4f[a] # # 0.714 with Sm
+
+
+				ene_df.loc[indexes[:n_atom_has_mag],"magmom"] = magmom
+				ene_df.loc[indexes[:n_atom_has_mag],"magmom_pv"] = magmom_pv
 				ene_df.loc[indexes[:n_atom_has_mag],"magmom_pa"] = ene_df["magmom"] / natom
 
 			# # # to get energy_substance_pa

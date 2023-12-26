@@ -134,9 +134,21 @@ init_mag_dict = dict({
 	"N":  0.0, 
 	"P":  0.0, 
 	"As":  0.0, 
-
-
 	})
+
+LANTHANIDE_MAG = {"La": 0.0, "Ce":2.143, "Pr": 3.200, "Nd":3.273,
+ "Sm":0.741, "Eu":0.0, "Gd":-7.00, "Tb":-9.0, "Dy":-10.0, "Ho":-10.0,
+ "Er":-9.0, "Tm":-7.0, "Yb":-4.0, "Lu":-0.0}
+ 
+
+J4f = {"Ce":2.5, "Pr":4.0 , "Nd":4.5, "Pm":4,
+	 "Sm":2.5, "Eu":0, "Gd":3.5, "Tb":6, "Dy":7.5, "Ho":8,
+	 "Er":7.5, "Tm":6, "Yb":3.5}
+
+gJ4f = {"Ce":6/float(7), "Pr":0.8 , "Nd":8/float(11) , "Pm":3/float(5),
+	 "Sm":2/float(7), "Eu":0.0, "Gd":2.0, "Tb":3/float(2), "Dy":4/float(3), 
+	 "Ho":5/float(4), "Er":6/float(5), "Tm":7/float(6), "Yb":8/float(7)}
+
 
 eval_color = dict({"Al":"#83A340", "Mo":"#DDD1E6", "Zn":"#642455", "Co":"#FFCB56", 
 				"Cu":"#1389A5", "Ti":"#9CDEEE", "Ga":"#C9EA3D"
