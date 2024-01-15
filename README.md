@@ -42,9 +42,7 @@ python $code_dir/process_features.py example/Sm1Fe12
 
 python $code_dir/collect_enthalpy_force.py example/Sm1Fe12
 
-
-3. Prompting Hypothetical Skeletons 
-# # # Prompt new hypothetical structures in the next generation of USPEX.
+- Prompt new hypothetical structures in the next generation of USPEX.
 python $code_dir/seeding.py example/Sm1Fe12
 
 
