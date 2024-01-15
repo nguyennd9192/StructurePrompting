@@ -1,4 +1,4 @@
-from general_lib_37 import *
+from lib import *
 import pymatgen as pm
 from pymatgen.io.cif import CifWriter
 import shutil, graphviz, pydot
@@ -7,8 +7,8 @@ from sklearn.decomposition import PCA
 
 from acquisition import acquisition
 from symmetry_generation import generate_subgroup_path
-from a2_features import *
-from a3_process_features import ProcessFeature
+from descriptor import *
+from process_features import ProcessFeature
 from utils import get_model
 from symmetry_transformation import symmetry_structure_generator
 
@@ -50,7 +50,6 @@ def get_predictor(estimator, x_train, y_train, x_test, y_test):
 
 		x_train_trans = embedding.transform(X_val=x_train, get_min_dist=False)
 		x_test_trans = embedding.transform(X_val=x_test, get_min_dist=False)
-		# variance = estimator.predict_proba(X=x_test, is_norm=True)
 
 		pca = PCA(n_components=2)
 		x_train = pca.fit_transform(x_train_trans)
@@ -71,16 +70,7 @@ def get_predictor(estimator, x_train, y_train, x_test, y_test):
 
 
 def symmetry_candidate_generator(gen, initial_candidates):
-	# # # with incremental distortion symmetry transformation
-	# delta_eps = float((max_symm_eps - min_symm_eps) / numGenerations)
-	# min_eps  = min_symm_eps + delta_eps*(gen-1)
-	# max_eps  = min_symm_eps + delta_eps*gen
-	# eps = round(random.uniform(min_eps, max_eps), eps_precision)
-
-	# # # without incremental distortion
 	eps = round(random.uniform(min_symm_eps, max_symm_eps), eps_precision)
-
-
 	gen_dir = get_uspex_dir(job=job, uspex_file="ML/symm_gen/gen{0}/eps_{1}/".format(gen, eps))
 	gen_ofm_dir = get_uspex_dir(job=job, uspex_file="ML/symm_gen_ft/gen{0}/eps_{1}/".format(gen, eps))
 
@@ -97,7 +87,6 @@ def symmetry_candidate_generator(gen, initial_candidates):
 
 	candidates = [os.path.join(path, name) for path, subdirs, files in os.walk(gen_dir) for name in files]
 
-	# # build ofm feature 
 	for cand_poscar in candidates:
 		config = dict({"filename": cand_poscar, 
 				"ft_type": feature_type,
@@ -113,7 +102,6 @@ def symmetry_candidate_generator(gen, initial_candidates):
 	ofm_dirs = [path.replace("/symm_gen/", "/symm_gen_ft/").replace(".poscar", ".{0}".format(feature_type)) 
 				for path, subdirs, files in os.walk(gen_dir) if len(subdirs) == 0]
 
-	# # save to csv
 	for ofm_dir in ofm_dirs:
 		csv_saveat = ofm_dir + ".csv"
 		if not os.path.isfile(csv_saveat):
@@ -123,7 +111,6 @@ def symmetry_candidate_generator(gen, initial_candidates):
 			process.csv_export(more_info=["name", "saveat"], 
 				csv_saveat=csv_saveat, from_feature_names="all")
 
-	# # # # looking for all generated 
 	all_gen_dir = get_uspex_dir(job=job, uspex_file="ML/symm_gen_ft/gen{0}".format(gen))
 	all_gen_files = [os.path.join(path, name) for path, subdirs, files in os.walk(all_gen_dir) for name in files if ".csv" in name]
 
@@ -137,7 +124,6 @@ def symmetry_candidate_generator(gen, initial_candidates):
 
 
 def symmetry_seeding(job, uspex_file, idv_file, save_fig_at):
-	
 	df = pd.read_csv(uspex_file, index_col="ID")
 	idv_df = pd.read_csv(idv_file, index_col="ID")
 	this_gen = np.nanmax(idv_df["Gen"])
@@ -183,7 +169,6 @@ def symmetry_seeding(job, uspex_file, idv_file, save_fig_at):
 
 		if "magmom_pa" in this_df.columns:
 			max_magEA_index = this_df["magmom_pa"].idxmax()
-			# this_max_mag = this_df.loc[max_magEA_index, "magmom_pa"]
 		
 		# if this_min_ene < 0.1:
 		min_ene_EA = get_uspex_dir(job=job, 
@@ -281,8 +266,6 @@ if __name__ == '__main__':
 		ofm_ene_file = get_ofm_ene_csv_dir(job=job)
 		idv_file = get_uspex_dir(job=job, uspex_file="results1/Individuals_magmom_ene.csv")
 		save_fig_at = get_uspex_dir(job=job, uspex_file="ML/uspex_population")
-
-
 		symmetry_seeding(job=job, uspex_file=ofm_ene_file, 
 				idv_file=idv_file, save_fig_at=save_fig_at)
 

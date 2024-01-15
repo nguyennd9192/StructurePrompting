@@ -19,15 +19,6 @@ class CombinationGeneratorFactory(object):
             return KCombinationGenerator(
                 items=items, sample_size=sample_size, n_shuffle=n_shuffle
             )
-            # n_combinations = int(comb(len(items), sample_size))
-            # if n_combinations > n_shuffle:
-            #     return KCombinationGenerator(
-            #         items=items, sample_size=sample_size, n_shuffle=n_shuffle
-            #     )
-            # else:
-            #     return FullKCombinationGenerator(
-            #         items=items, sample_size=sample_size
-            #     )
         elif method == "all":
             return FCGAll(
                 items=items, sample_size=sample_size

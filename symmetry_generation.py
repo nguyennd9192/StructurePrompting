@@ -1,5 +1,4 @@
-
-from general_lib_37 import * 
+from lib import * 
 from pymatgen.transformations.advanced_transformations import *
 from pymatgen.core.structure import Structure
 from pymatgen.core.periodic_table import Specie, DummySpecie
@@ -9,11 +8,8 @@ from pyxtal import pyxtal
 from pymatgen.vis.structure_vtk import StructureVis, make_movie, MultiStructuresVis
 from pymatgen.vis.structure_chemview import quick_view
 import subprocess
-# from pymatgen.symmetry.site_symmetries import get_site_symmetries
 from pymatgen.symmetry.structure import *
 from pymatgen.transformations.advanced_transformations import CubicSupercellTransformation
-
-
 
 def generate_descendant(parent_struct, H, savedir, ith_trial, eps, is_primcell, n_site_prime, init_symm):
 	pmg_struct, new_structure, pmg_symm = None, None, None
@@ -28,9 +24,7 @@ def generate_descendant(parent_struct, H, savedir, ith_trial, eps, is_primcell, 
 		if is_primcell:
 			prim_cell = pmg_struct.get_primitive_structure()
 			prim_cell_symm_info = prim_cell.get_space_group_info(symprec=symprec, angle_tolerance=5.0)
-			# print (prim_cell_symm_info)
 			prim_cell_symm = prim_cell_symm_info[1]
-			# assert pmg_symm == prim_cell_symm
 			assert len(prim_cell.species) == n_site_prime
 			pmg_struct = copy.copy(prim_cell)
 		
@@ -45,7 +39,6 @@ def generate_descendant(parent_struct, H, savedir, ith_trial, eps, is_primcell, 
 	return pmg_struct, new_structure, pmg_symm
 
 	
- 
 def get_sub_groups(symm):
 	g = Group(symm)
 	subgroups = g.get_max_t_subgroup()['subgroup']
@@ -54,10 +47,6 @@ def get_sub_groups(symm):
 
 def trans_by_path(ref_struct):
 	structs = ref_struct._get_subgroup_ids(H=None, group_type="t", idx=None, max_cell=1, min_cell=1)
-
-	# structs = p.get_transition_by_path(ref_struct, path, d_tol, d_tol2=0.5, N_images=2, both=False)
-	# structs = ref_struct.get_transition(ref_struc=ref_struct, d_tol=1.0, d_tol2=0.3, 
-	# 	N_images=2, max_path=30, both=False)
 	return structs
 
 

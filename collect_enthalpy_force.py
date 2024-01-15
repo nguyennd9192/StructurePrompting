@@ -1,43 +1,9 @@
+from lib import *
 from ase.phasediagram import PhaseDiagram
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 import re 
-from general_lib_37 import *
-import csv
-from a4_phase_diag import Individuals2csv, create_phasediag
-
-
-def create_enthalpies_plot(filename):
-	df = pd.read_csv(filename, index_col="ID")
-	ele1, ele2, ele3 = "Sm", "Fe", "Ti"
-	eles = [ele1, ele2, ele3]
-	refs = []
-
-	fig = plt.figure(figsize=(8, 8))
-
-	indexes = df.index
-	for idx in indexes:
-		try:
-			enthalpy_values = list(map(float, df.loc[idx, :].values))
-			if len(enthalpy_values) == 4:
-				plt.plot(enthalpy_values, linestyle='-.', alpha=0.8)
-			plt.annotate(idx, xy=(0, enthalpy_values[0]), size=12)
-		except Exception as e:
-			pass
-	plt.ylabel('enthalpy')
-	plt.xlabel('vr step')
-	# plt.ylim([-130, -90])
-
-	# plt.title(title, **title_font)
-	plt.tight_layout(pad=1.1)
-
-	# # # setting only for Individuals # # #
-	saveat = filename.replace("/uspex_calc/","/figure/").replace(".csv",".pdf")
-
-	makedirs(saveat)
-	plt.savefig(saveat, transparent=False)
-
 if __name__ == '__main__':
 	is_uspex_pd = True
 	is_oqmd_pd = False
@@ -51,7 +17,6 @@ if __name__ == '__main__':
 			origin_file = get_uspex_dir(job=job, uspex_file="results1/origin")
 			origin2csv(filename=origin_file)
 			
-
 			ene_df = pd.read_csv(idv_csv, index_col="ID")
 			indexes = ene_df.index
 			vol = ene_df["Volume"].values
@@ -114,67 +79,3 @@ if __name__ == '__main__':
 			assert len(ofm_df) == len(ene_df) == len(merge_df)
 
 			merge_df.to_csv(ofm_ene_file)
-
-
-	if is_oqmd_pd: 
-		for ele in ["Zr", "N", "As", "P", "Ti"]: # "Co", "Cu", "Ga", "B"
-			comps_array = copy.copy(org_comp)
-			comps_array.append(ele)
-			cmp_name = "".join(comps_array)
-
-			# # structures from original oqmd 
-			oqmd_file = input_dir + "/oqmd_csv/{}.csv".format(cmp_name)
-			savedir = result_dir + "/figure/oqmd_csv/{}".format(cmp_name)
-			df = pd.read_csv(oqmd_file, index_col="ID")
-
-			df = pd.read_csv(oqmd_file, index_col=0)
-			create_phasediag(filename=oqmd_file, 
-				comps_array=comps_array, comps_list=["Composition{}".format(k) for k in comps_array],
-				savedir=savedir, phase_corners=[[1, 0, 0], [0, 1, 0] , [0, 0, 1]],
-				z_values=df["energy_substance_pa"].values, vcenter=0.0,
-				v_range_dict=dict({"delta_e": [-0.1, 0.1],
-					"energy_substance_pa": [-0.1, 0.1]}),
-				is_show_all=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

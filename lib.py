@@ -23,11 +23,11 @@ tv = "energy_substance_pa"
 numGenerations = 30
 SmFe12_ene = 0.07
 
-n_symm_seeding = 32 # # population 128
-max_symm_gen = 30 # # generation each skeleton seed, for quad, number of init seeding is large
-min_symm_eps = 0.1 # # eps tolerance to generate candidates
-max_symm_eps = 0.5 # # eps tolerance to generate candidates
-n_symm_levels = 1 # # keep highest sub symm
+n_symm_seeding = 32 
+max_symm_gen = 30 
+min_symm_eps = 0.1 
+max_symm_eps = 0.5 
+n_symm_levels = 1 
 max_one_attempt = 50
 
 feature_type = "ofm1_with_d" # ofm1_with_d ofm1_no_d
@@ -37,7 +37,6 @@ embedding_method = "MLKR"
 symprec = 0.1
 ith_trial = 1
 eps_precision = 2 # 
-# baseline2_symm/1e-4/Sm1Fe12
 
 main_dir = "/Users/nguyennguyenduong/Dropbox/My_code/USPEX_run/Structure Prompting" 
 code_dir =  main_dir + "/code"
@@ -649,29 +648,6 @@ def get_color_112(index):
 				colors[color] = "full"
 	return colors
 
-
-
-def check_set_label(label, set_label):
-	if label not in set_label:
-		set_label.append(label)
-		return label, set_label
-	else:
-		return None, set_label
-
-
-def filter_Sm(df, is_with_Sm, symm=None):
-	# df = df[(df["energy_substance_pa"] < 0.8) & (df["energy_substance_pa"] > -0.4)]
-	if symm is not None:
-		df = df[df["SYMM"] == symm]
-		# df = df[(df["CompositionSm"] != 0) & (df["CompositionFe"] >= 10)] # 
-
-	if is_with_Sm is None:
-		return df
-	elif is_with_Sm:
-		df = df[df["CompositionSm"] != 0]
-	else:
-		df = df[df["CompositionSm"] == 0]
-	return df
 
 def read_poscar(filename):
 	with open(filename, 'r') as f:

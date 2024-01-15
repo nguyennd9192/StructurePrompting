@@ -3,19 +3,13 @@ import numpy as np
 import os, copy, glob, random
 import numpy as np
 import pandas as pd
-from general_lib_37 import *
-
+from lib import *
 from symmetry_generation import *
-
-
 def get_subdirs(sdir):
 	subdirs = glob.glob(sdir+"/*")
 	return subdirs
 
 def Individuals2csv(filename):
-	# # # # # # # # # # # # 
-	# # convert Individuals uspex to csv
-	# # # # # # # # # # # # 
 	tocsv_file = filename + ".csv" 
 	tof = open(tocsv_file, 'w')
 
@@ -49,7 +43,6 @@ def Individuals2csv(filename):
 			elif ith==1:
 				continue
 			tof.write(newline)
-				# idx = "structure{}".format(ith -1)
 	tof.close()
 	return tocsv_file, comps_array, comps_list
 
@@ -65,7 +58,6 @@ def gen_from_pool():
 		comps_array.remove("Sm")
 
 		for e in comps_array:
-			# # from composition to storage dir
 			pool_dir = "{0}/{1}".format(the_pool_dir, "".join(["Sm", "Fe", e]))
 			struc_in_pool = get_subdirs(sdir=pool_dir)
 			
@@ -114,13 +106,6 @@ def gen_sub_symm():
 			makedirs(the_seed_file)
 			seed_files = get_subdirs(pool_dir)
 			write_seed_file(write_to=the_seed_file, seed_files=seed_files)
-
-
-
-if __name__ == '__main__':
-	gen_from_pool()
-	# gen_sub_symm()
-
 
 
 

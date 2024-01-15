@@ -1,12 +1,8 @@
 import numpy as np
 import pymatgen as pm
 from abc import ABCMeta, abstractmethod
-
-try:
-	from pymatgen.analysis.diffraction.xrd import XRDCalculator
-	from general_lib_37 import *
-except:
-	pass
+from pymatgen.analysis.diffraction.xrd import XRDCalculator
+from lib import *
 from pymatgen.analysis import transition_state
 from pymatgen.io.vasp import inputs, outputs
 from pymatgen.util.plotting import pretty_plot

@@ -9,7 +9,6 @@ from general_lib_37 import *
 
 
 if __name__ == '__main__': 
-
 	uspex_output = [
 			# "BESTgatheredPOSCARS", "BESTgatheredPOSCARS_order", #"goodStructures_POSCARS",
 			# "gatheredPOSCARS_unrelaxed", "gatheredPOSCARS_order", 
@@ -22,14 +21,9 @@ if __name__ == '__main__':
 
 			with open(symstruct_file, 'r') as f:
 				inp = f.read()
-
-			# # #
-			iter_ =  list(re.finditer("EA", inp)) #
+			iter_ =  list(re.finditer("EA", inp))
 			indices = [m.start(0) for m in iter_]
-
-
 			symstruct_savedir = get_uspex_dir(job=job, uspex_file="ML/symstruct/{0}".format(ea_type))
-
 			for ith, indice in enumerate(indices):
 				if ith != len(indices)-1:
 					one_structure = inp[indice:indices[ith+1]]

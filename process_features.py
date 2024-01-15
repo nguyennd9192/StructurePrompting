@@ -1,12 +1,8 @@
 import os, sys, pickle
 import numpy as np
 import pandas as pd
-# from general_lib_sql import *
-try:
-	from general_lib_37 import *
-except Exception as e:
-	pass
-from a2_features import OFMFeature, XRDFeature
+from lib import *
+from descriptor import OFMFeature, XRDFeature
 
 class ProcessFeature(): 
 	def __init__(self):
@@ -19,8 +15,6 @@ class ProcessFeature():
 	def process_file_paths(self, structure_dir):
 		struct_files = get_subdirs(sdir=structure_dir)
 		data = []
-		# # load all struct_repr_obj
-
 		for struct_file in struct_files:
 			if " " not in struct_file:
 				with open(struct_file, "rb") as tmp_f:
@@ -98,8 +92,6 @@ class ProcessFeature():
 		local_repr = []
 		local_xyz = []
 
-		print (all_atoms.shape, all_locals.shape, all_local_xyz.shape)
-
 		if is_atom == "all":
 			for atoms, struct_file in zip(all_atoms, struct_files):
 				idxes = ["{0}/{1}".format(struct_file, a) for a in atoms]
@@ -107,10 +99,6 @@ class ProcessFeature():
 			local_repr = copy.copy(all_locals)
 		else:
 			for atoms, this_locals, this_local_xyz, struct_file in zip(all_atoms, all_locals, all_local_xyz, struct_files):
-				# print (atoms, this_locals, this_local_xyz, struct_file)
-				# print (len(atoms), len(this_locals), len(this_local_xyz))
-				# print ("=====")
-
 				if atoms is not None:
 					for a, c, c_x in zip(atoms, this_locals, this_local_xyz):
 						idxes = []
@@ -128,9 +116,7 @@ class ProcessFeature():
 		return local_repr, local_idxes, local_xyz
 
 if __name__ == '__main__':
-
 	for job in jobs:
-		# # # run uspex in server
 		ft_dir = "{0}/{1}/ML/feature/{2}/".format(result_dir, 
 					job, feature_type)
 		csv_saveat = get_ofm_csv_dir(job=job)

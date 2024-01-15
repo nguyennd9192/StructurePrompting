@@ -2,20 +2,15 @@ import pandas as pd
 import numpy as np
 import warnings
 from joblib import parallel_backend
-
 from sklearn.metrics import r2_score, mean_absolute_error, accuracy_score, precision_recall_fscore_support
-
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.kernel_ridge import KernelRidge
-# from least_square_fit import LeastSquareFit
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, scale
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, WhiteKernel, ExpSineSquared
 from sklearn.neighbors import KNeighborsRegressor
-
-
 from sklearn.utils._testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning
 
@@ -284,8 +279,6 @@ def CV_predict_score(model, X, y, n_folds=3, n_times=3, score_type='r2'):
             this_score = precision_recall_fscore_support(y_true=y, y_pred=y_predict, 
                 average='macro')
             scores.append(this_score)
-
-
     if score_type == "r2":
         return np.mean(scores), np.std(scores), np.mean(errors), np.std(errors)
     

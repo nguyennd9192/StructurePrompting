@@ -1,21 +1,17 @@
 
-from general_lib_37 import * 
+from lib import * 
 from pymatgen.core.structure import Structure
 from pyxtal import pyxtal 
 from pyxtal.lattice import Lattice
-
 import nevergrad as ng
 from robocrys import StructureCondenser, StructureDescriber
 import qmpy
-
 from pymatgen.symmetry.structure import SymmetrizedStructure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer, SpacegroupOperations
 from timeout_decorator import timeout
 from symmetry_generation import make_supercell
-
 from pymatgen.transformations.advanced_transformations import SuperTransformation, MonteCarloRattleTransformation
 import re
-
 
 @timeout(20)
 
@@ -61,13 +57,6 @@ def structure_training(org_structure,
 			X_sites[rename_label] = coords
 			sites.append(X_sites)
 
-	# elements = ['Sm', 'Fe']
-	# composition = [2, 24]
-
-	# sites = [{'2b': [0. , 0. , 0.5]}, # # original: "b2"
-	# 		{'8h': [0.230331, 0.230331, 0.      ], 
-	# 		'16k': [0.337969, 0.162031, 0.25    ]}]
-
 	pert_structure = None
 	s = pyxtal()
 	try:
@@ -78,18 +67,7 @@ def structure_training(org_structure,
 		pert_structure = s.to_pymatgen()
 		if is_return_structure:
 			return pert_structure
-		# rattle_std = 2  # Adjust as needed
-		# min_distance = 2.6
-		# trans = MonteCarloRattleTransformation(rattle_std=rattle_std, min_distance=min_distance)
-		# # Step 5: Create a super transformation
-		# # This is needed to apply multiple transformations in sequence
-		# # trans = SuperTransformation(transformations)
-
-		# # Step 6: Apply the transformation to the structure
-		# pert_structure = trans.apply_transformation(pert_structure)
-
 		analyzer = SpacegroupAnalyzer(structure=pert_structure, symprec=symprec)
-		# pert_structure =  analyzer.get_symmetrized_structure()
 
 		pert_structure = analyzer.get_conventional_standard_structure(
 			international_monoclinic=True)
@@ -111,28 +89,8 @@ def structure_training(org_structure,
 		return 100.0
 
 
-
-
-
-
-	# structure = Structure(lattice, sites)
-
-	# spg_ops = SpacegroupOperations(
- #            spacegroup.get_space_group_symbol(),
- #            spacegroup.get_space_group_number(),
- #            spacegroup.get_symmetry_operations(),
- #        )
-	# print (spg_ops)
-	# structure = SymmetrizedStructure(structure, 
-	# 	spacegroup=spg_ops, 
-	# 	equivalent_positions=sites, wyckoff_letters=wyckoff_letters)
-	# print (structure)
-
-
 	symm_sites = describer._da.sites
 	score = 0
-
-
 
 	for symm_site in symm_sites:
 		element = symm_sites[symm_site]["element"]
@@ -140,8 +98,6 @@ def structure_training(org_structure,
 		likeness = round(symm_sites[symm_site]["geometry"]["likeness"], 2)
 		sym_labels = symm_sites[symm_site]["sym_labels"][0]
 
-		print (element, site_type)
-		print ("========")
 		if "coordinate" in site_type:
 			n_coord = float(site_type[:site_type.find("-")])
 			score -= n_coord 
@@ -155,8 +111,6 @@ def structure_training(org_structure,
 					score -= n_coord
 				else:
 					score += n_coord
-
-
 
 		if element == "Sm":
 			if site_type == "square co-planar":
@@ -242,38 +196,24 @@ def optimize_query(filename,
 		Sm_frac_coords=Sm_frac_coords_search_space,
 		Fe_frac_coords=Fe_frac_coords_search_space,
 		X_frac_coords=X_frac_coords_search_space,
-
-
 		symm_group=symm_group,
 		Sm_labels=wyckoff_info["Sm"]["labels"], 
 		Fe_labels=wyckoff_info["Fe"]["labels"],
 		X_labels=X_labels,
-
-
 		is_return_structure=False,
 		species=species, numIons=numIons,
 
 				)
 
-
-	# optimizer = ng.optimizers.NGOpt15(parametrization=parametrization, budget=20)
-
-	# optimizer = ng.optimizers.BayesOptim(init_budget=10, pca=True, n_components=2)
-	# print (dir(optimizer))
 	optimizer = ng.optimizers.NGOpt39(parametrization=parametrization, budget=10)
-
 	recommendation = optimizer.minimize(structure_training)
 
 	best_kwargs = recommendation.kwargs
-	print (best_kwargs)
-
 	opt_structure = structure_training(
 		org_structure=filename,
 		Sm_frac_coords=best_kwargs["Sm_frac_coords"],
 		Fe_frac_coords=best_kwargs["Fe_frac_coords"],
 		X_frac_coords=best_kwargs["X_frac_coords"],
-
-
 		symm_group=symm_group,
 		Sm_labels=best_kwargs["Sm_labels"], 
 		Fe_labels=best_kwargs["Fe_labels"],
@@ -287,7 +227,6 @@ def optimize_query(filename,
 		)
 
 	makedirs(saveat)
-
 	if opt_structure is not None and not isinstance(opt_structure, float):
 		opt_structure.to(fmt="poscar", filename=saveat)
 		print ("===================")
@@ -319,13 +258,6 @@ def symmetry_structure_generator(gen_dir, initial_candidate,
 
 	random_structure = pyxtal()
 	for trial in range(n_gen):
-		# pyxtal_cell = Lattice.from_para(
-		# 	# a=2*lattice.a, b=lattice.b, c=lattice.c, 
-		# 	# alpha=lattice.alpha, beta=lattice.beta, gamma=lattice.gamma, 
-		# 	a=8.4, b=8.4, c=4.8, 
-		# 	alpha=90, beta=90, gamma=90, 
-
-		# 	ltype=lattice_type)
 		try:
 			random_structure.from_random(
 					dim=3,
@@ -355,9 +287,6 @@ def symmetry_structure_generator(gen_dir, initial_candidate,
 				species=species, numIons=numIons,
 				symm_group=group, saveat=saveat)
 			print ("Optimized. Symmetry generated saveat: ", saveat)
-		# prim_cell_symm_info = prim_cell.get_space_group_info(symprec=symprec, angle_tolerance=5.0)
-		# # print (prim_cell_symm_info)
-		# prim_cell_symm = prim_cell_symm_info[1]
 		except Exception as e:
 			print (e)
 			pass
