@@ -41,6 +41,7 @@ python $code_dir/descriptor.py example/Sm1Fe12
 
 # # # Estimate formation energy, saturated magnetization for all generated structures.
 python $code_dir/process_features.py example/Sm1Fe12
+
 python $code_dir/collect_enthalpy_force.py example/Sm1Fe12
 
 
