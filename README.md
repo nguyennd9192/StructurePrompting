@@ -31,17 +31,21 @@ Example of running Structure Prompting program is shown in "example" folder.
 Bash script of running the example is shown in run.sh. Details description is shown as in follow.
 
 - Save all generated structures.
-python $code_dir/collect_structures.py example/Sm1Fe12
+
+	python $code_dir/collect_structures.py example/Sm1Fe12
 
 - Prepare Orbital-Field matrix representation for all generated structures.
-python $code_dir/descriptor.py example/Sm1Fe12
+
+	python $code_dir/descriptor.py example/Sm1Fe12
 
 - Estimate formation energy, saturated magnetization for all generated structures.
+	
 	python $code_dir/process_features.py example/Sm1Fe12 
 	
 	python $code_dir/collect_enthalpy_force.py example/Sm1Fe12
 
 - Prompt new hypothetical structures in the next generation of USPEX.
-python $code_dir/seeding.py example/Sm1Fe12
+
+	python $code_dir/seeding.py example/Sm1Fe12
 
 
