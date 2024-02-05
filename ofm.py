@@ -80,8 +80,6 @@ def ofm(struct, is_ofm1=True, is_including_d=True):
 					"local_xyz": local_xyz,
 					'pm_struct': struct}
 
-
-
 def get_ofm1_name():
 	centers = ['s1', 's2', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6',
 		'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10',
