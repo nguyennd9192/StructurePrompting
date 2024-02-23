@@ -34,8 +34,7 @@ if __name__ == '__main__':
 					for element in comps_array:
 						if element in LANTHANIDE_MAG.keys():
 							n_lanthanide = ene_df.loc[index, "Composition{}".format(element)]
-							# magmom += LANTHANIDE_MAG[a]
-							magmom[index] += n_lanthanide*J4f[a]*gJ4f[a] # # 0.714 with Sm
+							magmom[index] += n_lanthanide*J4f[element]*gJ4f[element] # # 0.714 with Sm
 
 
 				ene_df.loc[indexes[:n_atom_has_mag],"magmom"] = magmom

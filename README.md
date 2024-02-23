@@ -22,7 +22,7 @@ https://www.vasp.at/wiki/index.php/Installing_VASP.5.X.X
 
 
 # III. Usage
-# 1. Dempster-Shafer Theory based Recommendation System  
+# 1. Modeling evidence of structure-forming ability with Dempster-Shafer Theory  
 Explain the use of Dempster-Shafer theory in the recommendation system.
 
 python $code_dir/micro_prompt.py --config example/Sm1Fe12/micro-prompt/config.yaml
@@ -30,8 +30,8 @@ python $code_dir/micro_prompt.py --config example/Sm1Fe12/micro-prompt/config.ya
 config.yaml is configuration file containing path of material structure dataset and list of families that are considered.
 
 
-# 2. Structure Prompting 
-Example of running Structure Prompting program is shown in "example" folder.
+# 2. Structure Editing 
+Example of running Structure Editing program is shown in "example" folder.
 Bash script of running the example is shown in run.sh. Details description is shown as in follow.
 
 - Save all generated structures.
