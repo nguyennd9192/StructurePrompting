@@ -5,12 +5,14 @@ from __future__ import print_function
 import copy, os, pickle, sys, scipy
 
 import numpy as np
+import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
+from sklearn.preprocessing import OneHotEncoder
 
 from tensorflow.io import gfile
 
@@ -112,6 +114,55 @@ def get_mldata(data_dir, name):
       X = X / 255
       y = y.flatten()
   return X, y, index
+
+def parse_material_structure_data(
+  df_ms_data, material_composition, list_of_elements,
+  fe_threshold=0.070463
+):
+  """Parse material structure data into dataset of material families.
+
+  Args:
+    df_ms_data: Dataframe of calculated material structures
+    material_composition: Material composition of calculated structures {Fe: 12, Sm:1, N:3}
+    list_of_elements: List of elements are used to define the compositions, including symmetry index
+    fe_threshold: Threshold of formation energy to determine which structures are stable
+
+  Returns:
+    Dataframe contains information of calculated material families
+  """
+  n_calculated_structures = len(df_ms_data)
+  
+  # Init onehot vector for material family
+  df_ms_data[list_of_elements] = np.zeros((n_calculated_structures, len(list_of_elements)))
+  df_ms_data[list_of_elements] = df_ms_data[list_of_elements].astype(int)
+  
+  # Update onehot vector for symmetry index
+  enc = OneHotEncoder(handle_unknown='ignore')
+  enc.fit((np.array(range(230))+1).reshape(-1,1))
+  X_cat = enc.transform(df_ms_data["SYMM"].values.reshape(-1,1))
+  df_symm = pd.DataFrame(X_cat.toarray(), columns=["SYMM_{}".format(i) for i in enc.categories_[0]], index=df_ms_data.index.values)
+  df_ms_data = pd.concat([df_ms_data, df_symm], axis=1)
+  
+  # Update onehot vector for material composition
+  set_name = []
+  for element, n_elements in material_composition.items():
+    df_ms_data[element] = np.ones(n_calculated_structures) * n_elements
+    set_name.extend([element for i in range(n_elements)])
+  
+  set_names, elements, indices = [], []
+  for ith, row in df_ms_data.iterrows():
+      elements.append("|".join(set_name))
+      set_names.append("|".join(set_name + ["SYMM_{}".format(row["SYMM"])]))
+      indices.append("{}_{}_{}".format(element, row["Gen"], ith))
+      
+  df_ms_data["length"] = df_ms_data[list_of_elements].values.sum(axis=1)
+  df_ms_data["Label"] = ["High" if i < fe_threshold else "Low" for i in df_ms_data["energy_substance_pa"].values]
+  df_ms_data["set_name"] = set_names
+  df_ms_data["element"] = elements
+  df_ms_data["ID"] = indices
+  
+  df_ms_data = df_ms_data.set_index("ID")
+  return df_ms_data
 
 def filter_data(X, y, keep=None):
   """Filters data by class indicated in keep.
