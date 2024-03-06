@@ -16,6 +16,7 @@
 "acquisition_function": "belief_utility",
 "learn": {
     "alpha": 0.001,
+    "ers_version": "v5",
     "tuned_parameters": [
         {
             "alpha": [0.001]
