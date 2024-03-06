@@ -231,6 +231,10 @@ def get_uspex_dir(job, uspex_file):
 	idv = result_dir + "{0}/{1}".format(job, uspex_file)
 	return idv
 
+def get_micro_config(job):
+	filename = result_dir + "{0}/config.yaml".format(job)
+	return filename
+
 def get_ofm_csv_dir(job):
 	filename = result_dir + "{0}/ML/feature/ofm_csv/{0}___{1}.csv".format(job, feature_type)
 	return filename

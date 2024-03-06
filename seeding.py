@@ -152,8 +152,16 @@ def symmetry_seeding(job, uspex_file, idv_file, save_fig_at):
 
 	# # get last two gens
 	init_gen_df = copy.copy(idv_df) # idv_df[idv_df["Gen"] >= this_gen-2]
-	sorted_symm_set = sorted(list(set(init_gen_df["SYMM"].values)), reverse=True)
-	for n_symm, this_symm in enumerate(sorted_symm_set):
+
+	micro_prompt_ranking_file = get_uspex_dir(job=job, uspex_file="ML/micro-prompt/ranking.csv")
+	if os.path.isfile(micro_prompt_ranking_file):
+		mp_df = pd.read_csv(micro_prompt_ranking_file, index_col=0)
+		mp_df_sorted = mp_df.sort_values(["acquisition_scores"], ascending=False).head(1)
+		prompted_symm_set = mp_df_sorted["SYMM"].values
+	else:
+		prompted_symm_set = sorted(list(set(init_gen_df["SYMM"].values)), reverse=True)
+
+	for n_symm, this_symm in enumerate(prompted_symm_set):
 		# this_df = idv_df[idv_df["SYMM"] == this_symm]
 		this_df = init_gen_df[init_gen_df["SYMM"] == this_symm]
 

@@ -329,7 +329,7 @@ class EvidentialClassifier(BaseEstimator):
     This module provides two running modes: single or parallel (using Spark).
     """
 
-    def __init__(self, core_set, frame_of_discernment, seperate_symbol="|", n_gram_evidence=2, alpha=0.1):
+    def __init__(self, core_set, frame_of_discernment, seperate_symbol="|", n_gram_evidence=2, alpha=0.1, version='v5'):
         """
         Creates a new classifier.
 
@@ -341,6 +341,7 @@ class EvidentialClassifier(BaseEstimator):
         self.seperate_symbol = seperate_symbol
         self.n_gram_evidence = n_gram_evidence
         self.alpha = alpha
+        self.version = version
         self.core_set = core_set
         self.frame_of_discernment = frozenset(frame_of_discernment)
         

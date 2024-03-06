@@ -9,7 +9,7 @@
             "data_path": "example/Sm1Fe12/micro-prompt/structures.csv"
         }
     ],
-    "candidates": "example/Sm1Fe12/micro-prompt/candidates.csv"
+    "candidates": "example/Sm1Fe12/micro-prompt/candidates.csv",
     "fe_threshold": 0.070463
 },
 "output_path": "example/Sm1Fe12/micro-prompt/output",

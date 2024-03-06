@@ -112,7 +112,7 @@ def get_mldata(data_dir, name):
       index = data["index"]
     if "keras" in dataname:
       X = X / 255
-      y = y.flatten()
+      y = y.flatten() 
   return X, y, index
 
 def parse_material_structure_data(
@@ -131,7 +131,7 @@ def parse_material_structure_data(
     Dataframe contains information of calculated material families
   """
   n_calculated_structures = len(df_ms_data)
-  
+
   # Init onehot vector for material family
   df_ms_data[list_of_elements] = np.zeros((n_calculated_structures, len(list_of_elements)))
   df_ms_data[list_of_elements] = df_ms_data[list_of_elements].astype(int)
@@ -145,15 +145,17 @@ def parse_material_structure_data(
   
   # Update onehot vector for material composition
   set_name = []
+  prefix = ""
   for element, n_elements in material_composition.items():
     df_ms_data[element] = np.ones(n_calculated_structures) * n_elements
     set_name.extend([element for i in range(n_elements)])
-  
-  set_names, elements, indices = [], []
+    prefix += "{}{}".format(element, n_elements)
+
+  set_names, elements, indices = [], [], []
   for ith, row in df_ms_data.iterrows():
       elements.append("|".join(set_name))
       set_names.append("|".join(set_name + ["SYMM_{}".format(row["SYMM"])]))
-      indices.append("{}_{}_{}".format(element, row["Gen"], ith))
+      indices.append("{}_{}_{}".format(prefix, row["Gen"], ith))
       
   df_ms_data["length"] = df_ms_data[list_of_elements].values.sum(axis=1)
   df_ms_data["Label"] = ["High" if i < fe_threshold else "Low" for i in df_ms_data["energy_substance_pa"].values]
@@ -163,6 +165,45 @@ def parse_material_structure_data(
   
   df_ms_data = df_ms_data.set_index("ID")
   return df_ms_data
+
+
+
+def get_candidate_space(
+material_composition, list_of_elements
+):
+  enc = OneHotEncoder(handle_unknown='ignore')
+  enc.fit((np.array(range(230))+1).reshape(-1,1))
+  
+  list_of_elements += list(material_composition.keys())
+
+  set_name = []
+  for element, n_elements in material_composition.items():
+    set_name.extend([element for i in range(n_elements)])
+
+  set_names, elements = [], []
+  symms = np.array(range(230))+1
+
+  for ith, symm in enumerate(symms):
+      elements.append("|".join(set_name))
+      set_names.append("|".join(set_name + ["SYMM_{}".format(symm)]))
+  
+  binary_data = enc.transform(symms.reshape(-1,1))
+
+  columns = ["SYMM_{}".format(i) for i in enc.categories_[0]]
+
+
+  df_candidates = pd.DataFrame(binary_data.toarray(), index=set_names, columns=columns)
+  df_candidates["SYMM"] = symms
+  df_candidates["set_name"] = set_names
+  df_candidates["element"] = elements
+  df_candidates["energy_substance_pa"] = np.nan
+  df_candidates["magmom_pa"] = np.nan
+  df_candidates["Label"] = np.nan
+
+  return df_candidates
+
+
+
 
 def filter_data(X, y, keep=None):
   """Filters data by class indicated in keep.

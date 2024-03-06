@@ -5,6 +5,7 @@ i=1
 while [ ! -f ./USPEX_IS_DONE ] ; do
    date >> log
    USPEX -r >> log
+   python $code_dir/micro_prompt.py example/Sm1Fe12
    python $code_dir/collect_structures.py example/Sm1Fe12
    python $code_dir/descriptor.py example/Sm1Fe12
    python $code_dir/process_features.py example/Sm1Fe12

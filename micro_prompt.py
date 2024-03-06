@@ -6,12 +6,15 @@ import os
 import pickle
 import yaml
 from utils.EvidentialClassifier import EvidentialClassifier
-from utils.utils import parse_material_structure_data
+from utils.utils import parse_material_structure_data, get_candidate_space
+from lib import *
 
 def load_data(cfg):
     df_observations = None
+    data_path = get_uspex_dir(job=job, uspex_file="results1/Individuals_magmom_ene.csv")
+
     for micro_prompts in cfg["input_path"]["structures"]:
-        df_ms_data = pd.read_csv(micro_prompts["data_path"], index_col=0)
+        df_ms_data = pd.read_csv(data_path, index_col=0)
         df_tmp = parse_material_structure_data(
             df_ms_data, micro_prompts["micro-prompt"], cfg["learn"]["list_of_elements"],
             cfg["input_path"]["fe_threshold"]
@@ -20,7 +23,14 @@ def load_data(cfg):
             df_observations = df_tmp
         else:
             df_observations = pd.concat([df_tmp, df_observations])
-    df_candidates = pd.read_csv(cfg["input_path"]["candidates"], index_col=0)
+
+    # for fix space reasoning
+    # df_candidates = pd.read_csv(cfg["input_path"]["candidates"], index_col=0)
+
+    df_candidates = get_candidate_space(
+        material_composition=micro_prompts["micro-prompt"], list_of_elements=cfg["learn"]["list_of_elements"]
+            )
+
     return df_observations, df_candidates 
 
 def acquisition_function(df_candidates, acquisition_function="belief"):
@@ -43,27 +53,29 @@ def acquisition_function(df_candidates, acquisition_function="belief"):
         return 2*df_candidates["m_High"].values + df_candidates["m_Unk"].values
 
 def train_recommender(df_data_train, cfg_learn):
+
     ec = EvidentialClassifier(
         core_set=cfg_learn["list_of_elements"], frame_of_discernment=frozenset({"High", "Low"}), n_gram_evidence=2, 
         alpha=cfg_learn["alpha"], version=cfg_learn["ers_version"]
     )
-    X = df_data_train[cfg_learn["list_of_elements"]].values
+    X = df_data_train["set_name"].values
     y = df_data_train[cfg_learn["target_variable"]].values
     ec.fit(X, y)
     return ec
 
 def main(cfg):
+
     # Load dataset of materials structures
     df_observations, df_candidates = load_data(cfg)
     
     # Select top structures with lowest formation energy for each micro configuration to learn the recommender for micro configuration
     df_data_train = df_observations.sort_values(["energy_substance_pa"], ascending=True).groupby("set_name").head(1)
-    
+
     # Train recommender
     recommender = train_recommender(df_data_train, cfg["learn"])
     
     # Evaluate candidates
-    y_pred, final_decisions = recommender.predict(df_candidates[cfg["learn"]["list_of_elements"]].values, show_decision=True)
+    y_pred, final_decisions = recommender.predict(df_candidates["set_name"].values, show_decision=True)
     
     ## Parse results of candidates estimation to dataframe
     m_High, m_Low, m_Unk = [], [], []
@@ -84,20 +96,23 @@ def main(cfg):
     
     ## Sorting candidates
     df_candidates = df_candidates.sort_values(by=["acquisition_scores"], ascending=False)
+    makedirs(cfg["output_path"] + "/tmp.txt")
     df_candidates.to_csv("{}/ranking.csv".format(cfg["output_path"]))
 
 if __name__ == '__main__':
     
     # Example of setting parameter for micro-prompt recommender
-    parser = argparse.ArgumentParser(description='VASP-Viz: Main')
-    parser.add_argument('--config-file', type=str)
+    # parser = argparse.ArgumentParser(description='VASP-Viz: Main')
+    # parser.add_argument('--config-file', type=str)
     
-    args = parser.parse_args()  
-    with open(args.config_file, "r") as yaml_file:
-        cfg = yaml.safe_load(yaml_file)
-    
-    output_path = "{}/{}_{}".format(
-        cfg["output_path"], cfg["learn"]["ers_version"], cfg["learn"]["alpha"] 
-    )
-    
-    main(cfg)
+    # args = parser.parse_args()  
+    for job in jobs:
+        config_file = get_micro_config(job=job)
+
+        with open(config_file, "r") as yaml_file:
+            cfg = yaml.safe_load(yaml_file)
+        
+        output_path = get_uspex_dir(job=job, uspex_file="ML/micro-prompt")
+        cfg["output_path"] = output_path
+
+        main(cfg)
