@@ -4,15 +4,11 @@
             "micro-prompt": {
                 "Sm": 1,
                 "Fe": 12,
-                "N": 1
             },
-            "data_path": "example/Sm1Fe12/micro-prompt/structures.csv"
         }
     ],
-    "candidates": "example/Sm1Fe12/micro-prompt/candidates.csv",
     "fe_threshold": 0.070463
 },
-"output_path": "example/Sm1Fe12/micro-prompt/output",
 "acquisition_function": "belief_utility",
 "learn": {
     "alpha": 0.001,
@@ -23,7 +19,7 @@
         }
     ],
     "list_of_elements": [
-        'Sm', 'Fe', 'B', 'C', 'N'
+        'Sm', 'Fe',
         'SYMM_1', 'SYMM_2', 'SYMM_3', 'SYMM_4', 'SYMM_5', 'SYMM_6', 'SYMM_7', 'SYMM_8', 'SYMM_9', 'SYMM_10', 
         'SYMM_11', 'SYMM_12', 'SYMM_13', 'SYMM_14', 'SYMM_15', 'SYMM_16', 'SYMM_17', 'SYMM_18', 'SYMM_19', 'SYMM_20', 'SYMM_21', 
         'SYMM_22', 'SYMM_23', 'SYMM_24', 'SYMM_25', 'SYMM_26', 'SYMM_27', 'SYMM_28', 'SYMM_29', 'SYMM_30', 'SYMM_31', 'SYMM_32', 
